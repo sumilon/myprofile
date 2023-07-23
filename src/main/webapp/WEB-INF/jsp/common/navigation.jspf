@@ -1,0 +1,22 @@
+<nav role="navigation" class="navbar navbar-default">
+ <div class="">
+  <a href="/welcome" class="navbar-brand">iProfile</a>
+ </div>
+ <div class="navbar-collapse">
+     <ul class="nav navbar-nav">
+            <c:choose>
+             <c:when test="${role == '[ROLE_ADMIN]'}">
+               <li><a href="/upload">Upload</a></li>
+               <li><a href="/download">Download</a></li>
+             </c:when>
+             <c:otherwise>
+                <li class="active"><a href="/welcome">Home</a></li>
+                  <li><a href="/list-todos">Todos</a></li>
+             </c:otherwise>
+           </c:choose>
+     </ul>
+     <ul class="nav navbar-nav navbar-right">
+         <li><a href="/logout">Logout</a></li>
+     </ul>
+ </div>
+</nav>
