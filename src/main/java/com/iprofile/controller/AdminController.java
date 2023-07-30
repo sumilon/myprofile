@@ -17,10 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -61,14 +58,12 @@ public class AdminController {
     @GetMapping("/export-to-excel")
     public void exportIntoExcelFile(HttpServletResponse response, ModelMap model) throws IOException {
         response.setContentType("application/octet-stream");
-        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-        String currentDateTime = dateFormatter.format(new Date());
-
-        log.debug("export data to excel : " + currentDateTime);
 
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=todo_data_" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=todo_data.xlsx";
         response.setHeader(headerKey, headerValue);
+
+        log.debug("export data to excel : " + headerValue);
 
         model.put("role", welcomeController.getLoggedinUserRole());
 
