@@ -51,6 +51,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/add-todo").hasAnyRole("USER")
                 .antMatchers("/delete-todo").hasAnyRole("USER")
                 .antMatchers("/update-todo").hasAnyRole("USER")
+
+                .antMatchers("/list-scheduletodos").hasAnyRole("USER")
+                .antMatchers("/add-scheduletodo").hasAnyRole("USER")
+                .antMatchers("/delete-scheduletodo").hasAnyRole("USER")
+                .antMatchers("/update-scheduletodo").hasAnyRole("USER")
+
+                .antMatchers("/list-diary").hasAnyRole("USER")
+                .antMatchers("/add-diary").hasAnyRole("USER")
+                .antMatchers("/delete-diary").hasAnyRole("USER")
+                .antMatchers("/update-diary").hasAnyRole("USER")
+
                 .antMatchers("/download").hasAnyRole("ADMIN")
                 .antMatchers("/export-to-excel").hasAnyRole("ADMIN")
                 .antMatchers("/upload").hasAnyRole("ADMIN")

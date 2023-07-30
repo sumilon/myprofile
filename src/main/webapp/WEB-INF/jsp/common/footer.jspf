@@ -1,6 +1,9 @@
 <script src="webjars/jquery/1.9.1/jquery.min.js"></script>
 <script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="webjars/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+
 <script>
 
     $(function () {
@@ -11,10 +14,89 @@
         }).datepicker('update', new Date());
     });
 
+    $(function () {
+        $("#createdDate").datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'dd/mm/yyyy',
+        }).datepicker('update', new Date());
+    });
+
     $(document).ready(function() {
       $('li.active').removeClass('active').removeAttr('aria-current');
       $('a[href="' + location.pathname + '"]').closest('li').addClass('active').attr('aria-current', 'page');
     });
+
+    $(document).ready(function () {
+        $('#dtBasicExample').DataTable({
+            "scrollX": true,
+            "order": [[1, 'asc']],
+            //"pageLength": 5,
+            //lengthMenu: [[5, 10, 20, -1], [5, 10, 20, 'All']]
+        });
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    /* Formatting function for row details - modify as you need */
+    function format(d) {
+        // `d` is the original data object for the row
+        return (
+            '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+            '<tr>' +
+            '<td>Notes:</td>' +
+            '<td>' +
+            d.notes +
+            '</td>' +
+            '</table>'
+        );
+    }
+
+    $(document).ready(function () {
+        var table = $('#example').DataTable({
+            ajax: '/getDiaryData',
+            columns: [
+                {
+                    className: 'dt-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: '',
+                },
+                {
+                     "data": null,
+                     "render": function ( data, type, row, meta ) {
+                       return moment(data['createdDate']).format('dddd, MMMM Do YYYY');}
+                },
+                {
+                     "data": null,
+                     "render": function ( data, type, row, meta ) {
+                       return '<a href="/update-diary?id='+data['id']+'"><span class="glyphicon glyphicon-pencil"></span></a>'; }
+                },
+                {
+                  "data": null,
+                  "render": function ( data, type, row, meta ) {
+                    return '<a href="/delete-diary?id='+data['id']+'"><span class="glyphicon glyphicon-trash"></span></a>'; }
+              },
+            ],
+            order: [[2, 'asc']],
+        });
+
+        // Add event listener for opening and closing details
+        $('#example tbody').on('click', 'td.dt-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
+    });
+
 </script>
 
 <style type="text/css">

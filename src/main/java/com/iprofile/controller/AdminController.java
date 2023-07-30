@@ -1,6 +1,7 @@
 package com.iprofile.controller;
 
 import com.iprofile.model.Todo;
+import com.iprofile.model.UserDetails;
 import com.iprofile.service.FileUploaderService;
 import com.iprofile.service.TodoService;
 import com.iprofile.util.ExcelGenerator;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +40,21 @@ public class AdminController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public String download(ModelMap model) {
 
-        model.put("role", welcomeController.getLoggedinUserRole());
+        try {
+            List<Object[]> objList = todoService.countTotalDescriptionByUsers();
+            List<UserDetails> userDetailsList = new ArrayList<>();
+            for (Object[] obj : objList) {
+                UserDetails userDetails = new UserDetails();
+                userDetails.setUsername(String.valueOf(obj[0]));
+                userDetails.setMessageCount(String.valueOf(obj[1]));
+                userDetailsList.add(userDetails);
+            }
+            log.debug("user details : " + userDetailsList);
+            model.put("userdetails", userDetailsList);
+            model.put("role", welcomeController.getLoggedinUserRole());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "download-data";
     }
 
@@ -48,7 +64,7 @@ public class AdminController {
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
 
-        log.debug("export data to excel : "+currentDateTime);
+        log.debug("export data to excel : " + currentDateTime);
 
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=todo_data_" + currentDateTime + ".xlsx";
@@ -74,7 +90,7 @@ public class AdminController {
         model.put("role", welcomeController.getLoggedinUserRole());
         fileUploaderService.uploadFile(file);
 
-        log.debug("upload file : "+file.getName());
+        log.debug("upload file : " + file.getName());
 
         redirectAttributes.addFlashAttribute("message",
                 "You have successfully uploaded '" + file.getOriginalFilename() + "' !");

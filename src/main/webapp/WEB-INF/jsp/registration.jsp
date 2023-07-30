@@ -27,7 +27,7 @@
                     <label>Enter password</label>
                     <form:password path="password" autocomplete="off" class="form-control" />
                 </p>
-                <p>
+                <p hidden>
                     <label>Enter role</label>
                     <form:select path="role" class="form-control">
                         <option value="ROLE_ADMIN">ROLE_ADMIN</option>

@@ -11,7 +11,9 @@
              </c:when>
              <c:otherwise>
                 <li class="active"><a href="/welcome">Home</a></li>
-                  <li><a href="/list-todos">Todos</a></li>
+                <li><a href="/list-todos">Todos</a></li>
+                <li><a href="/list-scheduletodos">Schedule Todos</a></li>
+                <li><a href="/list-diary">Diary</a></li>
              </c:otherwise>
            </c:choose>
      </ul>

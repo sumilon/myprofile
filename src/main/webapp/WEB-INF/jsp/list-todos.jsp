@@ -12,14 +12,15 @@
    <h3>List of TODO's</h3>
   </div>
   <div class="panel-body">
-   <table class="table table-striped">
+   <table id="dtBasicExample" class="display compact" style="width:100%">
     <thead>
      <tr>
-      <th width="39%">Description</th>
-      <th width="10%">Priority</th>
-      <th width="16%">Target Date</th>
-      <th width="10%">Done</th>
-      <th width="25%"></th>
+       <th>Description</th>
+        <th>Priority</th>
+        <th>Target Date</th>
+        <th>Done</th>
+        <th></th>
+      <th></th>
      </tr>
     </thead>
     <tbody>
@@ -31,9 +32,9 @@
          pattern="dd/MM/yyyy" /></td>
        <td>${todo.done=='true'?'Yes':'No'}</td>
        <td><a type="button" class="btn btn-success"
-        href="/update-todo?id=${todo.id}">Update</a>
-       <a type="button" class="btn btn-warning"
-        href="/delete-todo?id=${todo.id}">Delete</a></td>
+        href="/update-todo?id=${todo.id}"><span class="glyphicon glyphicon-pencil"></span></a></td>
+       <td><a type="button" class="btn btn-warning"
+        href="/delete-todo?id=${todo.id}"><span class="glyphicon glyphicon-trash"></span></a></td>
       </tr>
      </c:forEach>
     </tbody>

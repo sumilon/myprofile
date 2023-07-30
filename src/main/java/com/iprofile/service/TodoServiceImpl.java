@@ -36,16 +36,14 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void addTodo(String name, String desc, Date targetDate, boolean done) {
-        todoRepository.save(new Todo(name, desc, "", targetDate, false));
+    public void addTodo(String name, String desc, String priority, Date targetDate, boolean done) {
+        todoRepository.save(new Todo(name, desc, priority, targetDate, false));
     }
 
     @Override
     public void deleteTodo(long id) {
         Optional<Todo> todo = todoRepository.findById(id);
-        if (todo.isPresent()) {
-            todoRepository.delete(todo.get());
-        }
+        todo.ifPresent(value -> todoRepository.delete(value));
     }
 
     @Override
@@ -56,5 +54,10 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public List<Todo> fetchAllToDos() {
         return todoRepository.findAll();
+    }
+
+    @Override
+    public List<Object[]> countTotalDescriptionByUsers() {
+        return todoRepository.countTotalDescriptionByUsers();
     }
 }
