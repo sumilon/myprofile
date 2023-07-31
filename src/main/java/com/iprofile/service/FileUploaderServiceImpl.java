@@ -4,6 +4,8 @@ import com.iprofile.model.Todo;
 import com.iprofile.repository.TodoRepository;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,8 @@ public class FileUploaderServiceImpl implements FileUploaderService {
 
     Workbook workbook;
 
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public List<Todo> getExcelDataAsList() {
         List<String> list = new ArrayList<String>();
@@ -58,14 +62,14 @@ public class FileUploaderServiceImpl implements FileUploaderService {
         }
 
         // Retrieving the number of sheets in the Workbook
-        System.out.println("-------Workbook has '" + workbook.getNumberOfSheets() + "' Sheets-----");
+        log.debug("-------Workbook has '" + workbook.getNumberOfSheets() + "' Sheets-----");
 
         // Getting the Sheet at index zero
         Sheet sheet = workbook.getSheetAt(0);
 
         // Getting number of columns in the Sheet
         int noOfColumns = sheet.getRow(0).getLastCellNum();
-        System.out.println("-------Sheet has '" + noOfColumns + "' columns------");
+        log.debug("-------Sheet has '" + noOfColumns + "' columns------");
 
         // Using for-each loop to iterate over the rows and columns
         for (Row row : sheet) {

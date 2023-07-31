@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.iprofile.model.UserRegistration;
+import com.iprofile.repository.JdbcRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UserController {
     @Autowired
     JdbcUserDetailsManager jdbcUserDetailsManager;
 
+    @Autowired
+    private JdbcRepository jdbcRepository;
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Bean
@@ -44,16 +48,25 @@ public class UserController {
 
         log.debug("Register User : " + userRegistrationObject.getUsername());
 
-        // authorities to be granted
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        //authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        authorities.add(new SimpleGrantedAuthority(userRegistrationObject.getRole()));
+        int count = jdbcRepository.checkUserExist(userRegistrationObject.getUsername());
 
-        String encodedPassword = passwordEncoder().encode(userRegistrationObject.getPassword());
+        log.debug("Check for user already exist : "+count);
 
-        User user = new User(userRegistrationObject.getUsername(), encodedPassword, authorities);
-        jdbcUserDetailsManager.createUser(user);
-        return new ModelAndView("redirect:/welcome");
+        if(count==0) {
+            // authorities to be granted
+            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+            //authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            authorities.add(new SimpleGrantedAuthority(userRegistrationObject.getRole()));
+
+            String encodedPassword = passwordEncoder().encode(userRegistrationObject.getPassword());
+
+            User user = new User(userRegistrationObject.getUsername(), encodedPassword, authorities);
+            jdbcUserDetailsManager.createUser(user);
+            return new ModelAndView("redirect:/welcome");
+        } else {
+            return new ModelAndView("registration", "message", "User Already Registered");
+        }
+
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
