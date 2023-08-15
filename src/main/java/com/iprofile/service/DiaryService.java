@@ -16,4 +16,6 @@ public interface DiaryService {
     void deleteDiary(long id);
 
     void saveDiary(Diary diary);
+
+    List<Diary> fetchAllDiaryData();
 }

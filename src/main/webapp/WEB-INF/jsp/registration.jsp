@@ -19,7 +19,7 @@
         <h2 class="form-heading">Register New User</h2>
         <div id="registerEmployee" class="form-group">
             <form:form action="/register" method="post" modelAttribute="user">
-                <span style="color:red">${mgg}</span>
+                <span style="color:red">${message}</span>
                 <p>
                     <label>Enter username</label>
                     <form:input path="username" autocomplete="off" class="form-control" />

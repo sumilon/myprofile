@@ -18,4 +18,6 @@ public interface ScheduleTodoService {
     void deleteScheduleTodo(long id);
 
     void saveScheduleTodo(ScheduleTodo scheduleTodo);
+
+    List<ScheduleTodo> fetchScheduleTodo();
 }

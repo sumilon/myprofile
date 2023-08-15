@@ -44,4 +44,9 @@ public class ScheduleTodoServiceImpl implements ScheduleTodoService {
     public void saveScheduleTodo(ScheduleTodo scheduleTodo) {
         scheduleToDoRepository.save(scheduleTodo);
     }
+
+    @Override
+    public List<ScheduleTodo> fetchScheduleTodo() {
+        return scheduleToDoRepository.findAll();
+    }
 }

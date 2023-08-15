@@ -39,4 +39,9 @@ public class DiaryServiceImpl implements DiaryService {
     public void saveDiary(Diary diary) {
         diaryRepository.save(diary);
     }
+
+    @Override
+    public List<Diary> fetchAllDiaryData() {
+        return diaryRepository.findAll();
+    }
 }

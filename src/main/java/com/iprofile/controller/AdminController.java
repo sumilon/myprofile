@@ -1,8 +1,12 @@
 package com.iprofile.controller;
 
+import com.iprofile.model.Diary;
+import com.iprofile.model.ScheduleTodo;
 import com.iprofile.model.Todo;
 import com.iprofile.model.UserDetails;
+import com.iprofile.service.DiaryService;
 import com.iprofile.service.FileUploaderService;
+import com.iprofile.service.ScheduleTodoService;
 import com.iprofile.service.TodoService;
 import com.iprofile.util.ExcelGenerator;
 import org.slf4j.Logger;
@@ -25,6 +29,12 @@ public class AdminController {
 
     @Autowired
     private TodoService todoService;
+
+    @Autowired
+    private ScheduleTodoService scheduleTodoService;
+
+    @Autowired
+    private DiaryService diaryService;
 
     @Autowired
     private FileUploaderService fileUploaderService;
@@ -68,7 +78,9 @@ public class AdminController {
         model.put("role", welcomeController.getLoggedinUserRole());
 
         List<Todo> listOfStudents = todoService.fetchAllToDos();
-        ExcelGenerator generator = new ExcelGenerator(listOfStudents);
+        List<ScheduleTodo> scheduleTodoList = scheduleTodoService.fetchScheduleTodo();
+        List<Diary> diaryList = diaryService.fetchAllDiaryData();
+        ExcelGenerator generator = new ExcelGenerator(listOfStudents, scheduleTodoList, diaryList);
         generator.generateExcelFile(response);
     }
 
@@ -104,9 +116,15 @@ public class AdminController {
         log.debug("save data in database");
 
         model.addAttribute("role", welcomeController.getLoggedinUserRole());
-        List<Todo> excelDataAsList = fileUploaderService.getExcelDataAsList();
+        List<Todo> excelDataAsList = fileUploaderService.getExcelDataAsList(0);
+        List<ScheduleTodo> scheduleTodoList = fileUploaderService.getExcelDataAsList1(1);
+        List<Diary> diaryList = fileUploaderService.getExcelDataAsList2(2);
         int noOfRecords = fileUploaderService.saveExcelData(excelDataAsList);
+        int noOfRecords1 = fileUploaderService.saveExcelData1(scheduleTodoList);
+        int noOfRecords2 = fileUploaderService.saveExcelData2(diaryList);
         model.addAttribute("noOfRecords", noOfRecords);
+        model.addAttribute("noOfRecords1", noOfRecords1);
+        model.addAttribute("noOfRecords2", noOfRecords2);
         return "upload-success";
     }
 }

@@ -1,6 +1,10 @@
 package com.iprofile.service;
 
+import com.iprofile.model.Diary;
+import com.iprofile.model.ScheduleTodo;
 import com.iprofile.model.Todo;
+import com.iprofile.repository.DiaryRepository;
+import com.iprofile.repository.ScheduleToDoRepository;
 import com.iprofile.repository.TodoRepository;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -43,12 +47,18 @@ public class FileUploaderServiceImpl implements FileUploaderService {
     @Autowired
     TodoRepository repo;
 
+    @Autowired
+    ScheduleToDoRepository repo1;
+
+    @Autowired
+    DiaryRepository repo2;
+
     Workbook workbook;
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public List<Todo> getExcelDataAsList() {
+    public List<Todo> getExcelDataAsList(int index) {
         List<String> list = new ArrayList<String>();
 
         // Create a DataFormatter to format and get each cell's value as String
@@ -65,10 +75,10 @@ public class FileUploaderServiceImpl implements FileUploaderService {
         log.debug("-------Workbook has '" + workbook.getNumberOfSheets() + "' Sheets-----");
 
         // Getting the Sheet at index zero
-        Sheet sheet = workbook.getSheetAt(0);
+        Sheet sheet = workbook.getSheetAt(index);
 
         // Getting number of columns in the Sheet
-        int noOfColumns = sheet.getRow(0).getLastCellNum();
+        int noOfColumns = sheet.getRow(index).getLastCellNum();
         log.debug("-------Sheet has '" + noOfColumns + "' columns------");
 
         // Using for-each loop to iterate over the rows and columns
@@ -127,6 +137,168 @@ public class FileUploaderServiceImpl implements FileUploaderService {
         todoList = repo.saveAll(todoList);
         return todoList.size();
     }
+
+//    ----------------------------------------------------------------------------------------
+
+    @Override
+    public List<ScheduleTodo> getExcelDataAsList1(int index) {
+        List<String> list = new ArrayList<String>();
+
+        // Create a DataFormatter to format and get each cell's value as String
+        DataFormatter dataFormatter = new DataFormatter();
+
+        // Create the Workbook
+        try {
+            workbook = WorkbookFactory.create(new File(EXCEL_FILE_PATH));
+        } catch (EncryptedDocumentException | IOException e) {
+            e.printStackTrace();
+        }
+
+        // Retrieving the number of sheets in the Workbook
+        log.debug("-------Workbook has '" + workbook.getNumberOfSheets() + "' Sheets-----");
+
+        // Getting the Sheet at index zero
+        Sheet sheet = workbook.getSheetAt(index);
+
+        // Getting number of columns in the Sheet
+        int noOfColumns = sheet.getRow(index).getLastCellNum();
+        log.debug("-------Sheet has '" + noOfColumns + "' columns------");
+
+        // Using for-each loop to iterate over the rows and columns
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                String cellValue = dataFormatter.formatCellValue(cell);
+                if (!cellValue.isEmpty())
+                    list.add(cellValue);
+                else
+                    break;
+            }
+        }
+
+        // filling excel data and creating list as List<Invoice>
+        List<ScheduleTodo> invList = createList1(list, noOfColumns);
+
+        // Closing the workbook
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return invList;
+    }
+
+    private List<ScheduleTodo> createList1(List<String> excelData, int noOfColumns) {
+
+        ArrayList<ScheduleTodo> invList = new ArrayList<ScheduleTodo>();
+
+        int i = noOfColumns;
+        do {
+            ScheduleTodo inv = new ScheduleTodo();
+            inv.setId(Long.parseLong(excelData.get(i)));
+            inv.setDescription(String.valueOf(excelData.get(i + 1)));
+            inv.setPriority(String.valueOf(excelData.get(i + 2)));
+            inv.setScheduleJob(String.valueOf(excelData.get(i + 3)));
+            inv.setDone(Boolean.valueOf(excelData.get(i + 4)));
+            inv.setUserName(String.valueOf(excelData.get(i + 5)));
+
+            invList.add(inv);
+            i = i + (noOfColumns);
+
+        } while (i < excelData.size());
+        return invList;
+    }
+
+
+    @Override
+    public int saveExcelData1(List<ScheduleTodo> scheduleTodoList) {
+        scheduleTodoList = repo1.saveAll(scheduleTodoList);
+        return scheduleTodoList.size();
+    }
+
+//    ----------------------------------------------------------------------------------------
+
+    @Override
+    public List<Diary> getExcelDataAsList2(int index) {
+        List<String> list = new ArrayList<String>();
+
+        // Create a DataFormatter to format and get each cell's value as String
+        DataFormatter dataFormatter = new DataFormatter();
+
+        // Create the Workbook
+        try {
+            workbook = WorkbookFactory.create(new File(EXCEL_FILE_PATH));
+        } catch (EncryptedDocumentException | IOException e) {
+            e.printStackTrace();
+        }
+
+        // Retrieving the number of sheets in the Workbook
+        log.debug("-------Workbook has '" + workbook.getNumberOfSheets() + "' Sheets-----");
+
+        // Getting the Sheet at index zero
+        Sheet sheet = workbook.getSheetAt(index);
+
+        // Getting number of columns in the Sheet
+        int noOfColumns = sheet.getRow(index).getLastCellNum();
+        log.debug("-------Sheet has '" + noOfColumns + "' columns------");
+
+        // Using for-each loop to iterate over the rows and columns
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                String cellValue = dataFormatter.formatCellValue(cell);
+                if (!cellValue.isEmpty())
+                    list.add(cellValue);
+                else
+                    break;
+            }
+        }
+
+        // filling excel data and creating list as List<Invoice>
+        List<Diary> invList = createList2(list, noOfColumns);
+
+        // Closing the workbook
+        try {
+            workbook.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return invList;
+    }
+
+    private List<Diary> createList2(List<String> excelData, int noOfColumns) {
+
+        ArrayList<Diary> invList = new ArrayList<Diary>();
+
+        int i = noOfColumns;
+        do {
+            Diary inv = new Diary();
+            inv.setId(Long.parseLong(excelData.get(i)));
+            try {
+                inv.setCreatedDate(new SimpleDateFormat("MM/dd/yyyy").parse(excelData.get(i + 1)));
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+            }
+            inv.setNotes(String.valueOf(excelData.get(i + 2)));
+            inv.setUserName(String.valueOf(excelData.get(i + 3)));
+
+            invList.add(inv);
+            i = i + (noOfColumns);
+
+        } while (i < excelData.size());
+        return invList;
+    }
+
+
+    @Override
+    public int saveExcelData2(List<Diary> diaryList) {
+        diaryList = repo2.saveAll(diaryList);
+        return diaryList.size();
+    }
+
+//    ----------------------------------------------------------------------------------------
 
     @Override
     public void uploadFile(MultipartFile file) {
