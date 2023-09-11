@@ -28,12 +28,10 @@ public class ScheduledTasks {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "MM/dd/yyyy HH:mm:ss");
 
-    private LocalDate currentdate = LocalDate.now();
-
     @Scheduled(cron = "0 30 5 * * MON")
     public void performTaskUsingCronWeekly() {
 
-        saveDataInToDos("WEEKLY", "for date " + currentdate.toString());
+        saveDataInToDos("WEEKLY", "for date " + LocalDate.now().toString());
         log.debug("Regular weekly task performed using Cron at "
                 + dateFormat.format(new Date()));
 
@@ -42,7 +40,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 30 5 1 * ?")
     public void performTaskUsingCronMonthly() {
 
-        saveDataInToDos("MONTHLY", "for month " + currentdate.getMonth().toString());
+        saveDataInToDos("MONTHLY", "for month " + LocalDate.now().getMonth().toString());
         log.debug("Regular monthly task performed using Cron at "
                 + dateFormat.format(new Date()));
 
